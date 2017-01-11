@@ -82,118 +82,78 @@ local function updateText()
     scoreText.text = "Score: " .. score
 end
 
-local function createAsteroid(scale)
- 
-    local newAsteroid = display.newImageRect( mainGroup, objectSheet, 1, 102, 85 )
-	table.insert( asteroidsTable, newAsteroid )
-	physics.addBody( newAsteroid, "dynamic", { radius=40, bounce=0.8 } )
-	newAsteroid.myName = "asteroid"
+local function initAsteroidPosition(asteroid)
+
+	local function setPosAndVel(asteroid, x, y, velX, velY)
+		asteroid.x = x
+		asteroid.y = y
+		asteroid:setLinearVelocity( velX, velY )
+	end
 	
 	local whereFrom = math.random( 3 )
 	
 	if ( whereFrom == 1 ) then
 		-- From the left
-		newAsteroid.x = -60
-		newAsteroid.y = math.random( 500 )
-		newAsteroid:setLinearVelocity( math.random( 40,120 ), math.random( 20,60 ) )
+		setPosAndVel(asteroid, -60, math.random( 500 ), math.random( 40,120 ), math.random( 20,60 ))
  
 	elseif ( whereFrom == 2 ) then
 		-- From the top
-		newAsteroid.x = math.random( display.contentWidth )
-		newAsteroid.y = -60
-		newAsteroid:setLinearVelocity( math.random( -40,40 ), math.random( 40,120 ) )
+		setPosAndVel(asteroid, math.random( display.contentWidth ), -60, math.random( -40,40 ), math.random( 40,120 ))
  
 	elseif ( whereFrom == 3 ) then
 		-- From the right
-		newAsteroid.x = display.contentWidth + 60
-		newAsteroid.y = math.random( 500 )
-		newAsteroid:setLinearVelocity( math.random( -120,-40 ), math.random( 20,60 ) )
-		
+		setPosAndVel(asteroid, display.contentWidth + 60, math.random( 500 ), math.random( -120,-40 ), math.random( 20,60 ))
 	end
 	
-	newAsteroid:applyTorque( math.random( -6,6 ) )
- 
+	asteroid:applyTorque( math.random( -6,6 ) )
+end
+
+local function initAsteroid(asteroid, radius, name)
+	table.insert( asteroidsTable, asteroid )
+	physics.addBody( asteroid, "dynamic", { radius=radius, bounce=0.8 } )
+	asteroid.myName = name
+	initAsteroidPosition(asteroid)
+end
+
+local function createAsteroid(scale)
+    local newAsteroid = display.newImageRect( mainGroup, objectSheet, 1, 102, 85 )
+	initAsteroid(newAsteroid, 40, "asteroid")
 end
 
 local function createSuperGunBonus()
 	local newSuperGunBonus = display.newImageRect( backGroup, "images/supergun.png", 90, 90 )
-	table.insert( asteroidsTable, newSuperGunBonus )
-	physics.addBody( newSuperGunBonus, "dynamic", { radius=40, bounce=0.8 } )
-	newSuperGunBonus.myName = "supergunbonus"
-	
-	local whereFrom = math.random( 3 )
-	
-	if ( whereFrom == 1 ) then
-		-- From the left
-		newSuperGunBonus.x = -60
-		newSuperGunBonus.y = math.random( 500 )
-		newSuperGunBonus:setLinearVelocity( math.random( 40,120 ), math.random( 20,60 ) )
- 
-	elseif ( whereFrom == 2 ) then
-		-- From the top
-		newSuperGunBonus.x = math.random( display.contentWidth )
-		newSuperGunBonus.y = -60
-		newSuperGunBonus:setLinearVelocity( math.random( -40,40 ), math.random( 40,120 ) )
- 
-	elseif ( whereFrom == 3 ) then
-		-- From the right
-		newSuperGunBonus.x = display.contentWidth + 60
-		newSuperGunBonus.y = math.random( 500 )
-		newSuperGunBonus:setLinearVelocity( math.random( -120,-40 ), math.random( 20,60 ) )
-		
-	end
-	
-	newSuperGunBonus:applyTorque( math.random( -6,6 ) )
+	initAsteroid(newSuperGunBonus, 40, "supergunbonus")
 end
 
 local function fireLaser()
 
-if(superGunBullets > 0) then
-
-	local newLaser1 = display.newImageRect( mainGroup, objectSheet, 5, 14, 40 )
-    physics.addBody( newLaser1, "dynamic", { isSensor=true } )
-    newLaser1.isBullet = true
-	newLaser1.myName = "laser"
-	newLaser1.x = ship.x
-	newLaser1.y = ship.y
-	newLaser1:toBack()
-	newLaser1:rotate(-30)
+	local function initLaser(name, x, y, angle)
+		local newLaser = display.newImageRect( mainGroup, objectSheet, 5, 14, 40 )
+		physics.addBody( newLaser, "dynamic", { isSensor=true } )
+		newLaser.isBullet = true
+		newLaser.myName = name
+		newLaser.x = x
+		newLaser.y = y
+		newLaser:toBack()
+		newLaser:rotate(angle)
+		return newLaser
+	end
 	
-	local newLaser2 = display.newImageRect( mainGroup, objectSheet, 5, 14, 40 )
-    physics.addBody( newLaser2, "dynamic", { isSensor=true } )
-    newLaser2.isBullet = true
-	newLaser2.myName = "laser"
-	newLaser2.x = ship.x
-	newLaser2.y = ship.y
-	newLaser2:toBack()
+	if(superGunBullets > 0) then
+		local newLaser1 = initLaser("laser", ship.x, ship.y, -30)
+		local newLaser2 = initLaser("laser", ship.x, ship.y, 0)
+		local newLaser3 = initLaser("laser", ship.x, ship.y, 30)
 	
-	local newLaser3 = display.newImageRect( mainGroup, objectSheet, 5, 14, 40 )
-    physics.addBody( newLaser3, "dynamic", { isSensor=true } )
-    newLaser3.isBullet = true
-	newLaser3.myName = "laser"
-	newLaser3.x = ship.x
-	newLaser3.y = ship.y
-	newLaser3:toBack()
+		newLaser1:setLinearVelocity( -320, -480 )
+		newLaser2:setLinearVelocity( 0, -480 )
+		newLaser3:setLinearVelocity( 320, -480 )
 	
-	newLaser1:setLinearVelocity( -320, -480 )
-	newLaser2:setLinearVelocity( 0, -480 )
-	newLaser3:setLinearVelocity( 320, -480 )
-	newLaser3:rotate(30)
+		superGunBullets = superGunBullets - 1
+	else
+		local newLaser = initLaser("laser", ship.x, ship.y, 0)
 	
-	superGunBullets = superGunBullets - 1
-else
-    local newLaser = display.newImageRect( mainGroup, objectSheet, 5, 14, 40 )
-    physics.addBody( newLaser, "dynamic", { isSensor=true } )
-    newLaser.isBullet = true
-	newLaser.myName = "laser"
-	
-	newLaser.x = ship.x
-	newLaser.y = ship.y
-	
-	newLaser:toBack()
-	
-	transition.to( newLaser, { y=-40, time=500, onComplete = function() display.remove( newLaser ) end } )
-end
+		transition.to( newLaser, { y=-40, time=500, onComplete = function() display.remove( newLaser ) end } )
+	end
  
 end
 
