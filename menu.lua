@@ -15,7 +15,6 @@ local function gotoHighScores()
     composer.gotoScene( "highscores", { time=800, effect="crossFade" } )
 end
 
--- create()
 function scene:create( event )
 
 	local sceneGroup = self.view
@@ -39,8 +38,6 @@ function scene:create( event )
 	menuMusic = audio.loadStream( "sounds/Midnight-Crawlers_Looping.wav")
 end
 
-
--- show()
 function scene:show( event )
 
 	local sceneGroup = self.view
@@ -55,8 +52,6 @@ function scene:show( event )
 	end
 end
 
-
--- hide()
 function scene:hide( event )
 
 	local sceneGroup = self.view
@@ -71,8 +66,6 @@ function scene:hide( event )
 	end
 end
 
-
--- destroy()
 function scene:destroy( event )
 
 	local sceneGroup = self.view
@@ -80,14 +73,9 @@ function scene:destroy( event )
 	audio.dispose(menuMusics)
 end
 
-
--- -----------------------------------------------------------------------------------
--- Scene event function listeners
--- -----------------------------------------------------------------------------------
 scene:addEventListener( "create", scene )
 scene:addEventListener( "show", scene )
 scene:addEventListener( "hide", scene )
 scene:addEventListener( "destroy", scene )
--- -----------------------------------------------------------------------------------
 
 return scene
