@@ -1,7 +1,4 @@
 local composer = require( "composer" )
- 
--- Seed the random number generator
 math.randomseed( os.time() )
- 
--- Go to the menu screen
-composer.gotoScene( "menu" )
+audio.reserveChannels( 1 )
+composer.gotoScene("menu", { time=800, effect="crossFade" })

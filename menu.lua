@@ -3,17 +3,7 @@ local composer = require( "composer" )
 
 local scene = composer.newScene()
 
--- -----------------------------------------------------------------------------------
--- Code outside of the scene event functions below will only be executed ONCE unless
--- the scene is removed entirely (not recycled) via "composer.removeScene()"
--- -----------------------------------------------------------------------------------
-
-
-
-
--- -----------------------------------------------------------------------------------
--- Scene event functions
--- -----------------------------------------------------------------------------------
+local menuMusic
 
 local function gotoGame()
     composer.removeScene( "game" )
@@ -45,6 +35,8 @@ function scene:create( event )
 	local highScoresButton = display.newText( sceneGroup, "High Scores", display.contentCenterX, 810, native.systemFont, 44 )
 	highScoresButton:setFillColor( 0.75, 0.78, 1 )
 	highScoresButton:addEventListener( "tap", gotoHighScores )
+	
+	menuMusic = audio.loadStream( "sounds/Midnight-Crawlers_Looping.wav")
 end
 
 
@@ -59,7 +51,7 @@ function scene:show( event )
 
 	elseif ( phase == "did" ) then
 		-- Code here runs when the scene is entirely on screen
-
+		audio.play( menuMusic, { channel=1, loops=-1 } )
 	end
 end
 
@@ -85,7 +77,7 @@ function scene:destroy( event )
 
 	local sceneGroup = self.view
 	-- Code here runs prior to the removal of scene's view
-
+	audio.dispose(menuMusics)
 end
 
 
@@ -97,3 +89,5 @@ scene:addEventListener( "show", scene )
 scene:addEventListener( "hide", scene )
 scene:addEventListener( "destroy", scene )
 -- -----------------------------------------------------------------------------------
+
+return scene
