@@ -1,7 +1,7 @@
 local composer = require( "composer" )
 local scene = composer.newScene()
 local json = require( "json" )
-local scoresTable = {}
+local scoresTable = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
  
 local filePath = system.pathForFile( "scores.json", system.DocumentsDirectory )
 
@@ -15,10 +15,6 @@ local function loadScores()
         local contents = file:read( "*a" )
         io.close( file )
         scoresTable = json.decode( contents )
-    end
- 
-    if ( scoresTable == nil or #scoresTable == 0 ) then
-        scoresTable = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
     end
 end
 
