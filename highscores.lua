@@ -1,7 +1,7 @@
 local composer = require( "composer" )
 local scene = composer.newScene()
 local json = require( "json" )
-local scoresTable = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+local scoresTable = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
  
 local filePath = system.pathForFile( "scores.json", system.DocumentsDirectory )
 
@@ -78,12 +78,30 @@ function scene:create( event )
 	highscoresMusic = audio.loadStream( "sounds/Escape_Looping.wav")
 end
 
-function scene:destroy( event )
-
+function scene:show( event )
 	local sceneGroup = self.view
+	local phase = event.phase
+	
+	if ( phase == "did" ) then
+		audio.play( highscoresMusic, { channel=1, loops=-1 } )
+	end
+end
+
+function scene:hide( event )
+    local phase = event.phase
+	
+    if ( phase == "did" ) then
+		audio.stop( 1 )
+    end
+end
+
+function scene:destroy( event )
 	audio.dispose(highscoresMusic)
 end
 
 scene:addEventListener( "create", scene )
+scene:addEventListener( "show", scene )
+scene:addEventListener( "hide", scene )
+scene:addEventListener( "destroy", scene )
 
 return scene

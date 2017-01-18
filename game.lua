@@ -98,7 +98,7 @@ local function initAsteroid(asteroid, radius, name)
 	initAsteroidPosition(asteroid)
 end
 
-local function createAsteroid(scale)
+local function createAsteroid()
     local newAsteroid = display.newImageRect( mainGroup, objectSheet, 1, 102, 85 )
 	initAsteroid(newAsteroid, 40, "asteroid")
 end
@@ -315,14 +315,11 @@ function scene:show( event )
     local phase = event.phase
  
     if ( phase == "will" ) then
-        -- Code here runs when the scene is still off screen (but is about to come on screen)
- 
+		
     elseif ( phase == "did" ) then
-        -- Code here runs when the scene is entirely on screen
-
-        
         Runtime:addEventListener( "collision", onCollision )
         gameLoopTimer = timer.performWithDelay( 500, gameLoop, 0 )
+		audio.setVolume( 0.2, { channel=1 } )
 		audio.play( musicTrack, { channel=1, loops=-1 } )
     end
 end
@@ -333,22 +330,18 @@ function scene:hide( event )
     local phase = event.phase
  
     if ( phase == "will" ) then
-        -- Code here runs when the scene is on screen (but is about to go off screen)
         timer.cancel( gameLoopTimer )
- 
     elseif ( phase == "did" ) then
-        -- Code here runs immediately after the scene goes entirely off screen
         Runtime:removeEventListener( "collision", onCollision )
         physics.pause()
 		audio.stop( 1 )
+		audio.setVolume( 1.0, { channel=1 } )
     end
 end
 
 function scene:destroy( event )
  
     local sceneGroup = self.view
-    -- Code here runs prior to the removal of scene's view
-    -- Dispose audio!
     audio.dispose( explosionSound )
     audio.dispose( fireSound )
     audio.dispose( musicTrack )
